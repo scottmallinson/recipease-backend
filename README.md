@@ -10,7 +10,7 @@
 | `get`  | `/auth/me` | check if i'm logged |
 | `post` | `/auth/login` | login |
 | `post` | `/auth/signup` | signup |
-| `post` | `/auth/logut` | logout |
+| `post` | `/auth/logout` | logout |
 | `get`  | `/auth/private` | private route for test |
 
 ## Login & Signup
