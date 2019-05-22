@@ -11,6 +11,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const auth = require('./routes/auth');
+const user = require('./routes/user');
 const recipe = require('./routes/recipe');
 
 mongoose
@@ -57,6 +58,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', auth);
+app.use('/user', user);
 app.use('/recipes', recipe);
 
 // catch 404 and forward to error handler

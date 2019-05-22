@@ -42,7 +42,7 @@ router.put(
   async (req, res, next) => {
     const { creatorId, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
     try {
-      const recipe = await Recipe.findOneAndUpdate({ creatorId, name, description, photoUrl, duration, ingredients, instructions, servings });
+      const recipe = await Recipe.findOneAndUpdate({ creatorId }, { $set: { name, description, photoUrl, duration, ingredients, instructions, servings } }, { new: true });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -92,16 +92,5 @@ router.get(
     }
   }
 );
-
-// router.post('/logout', isLoggedIn(), (req, res, next) => {
-//   req.session.destroy();
-//   return res.status(204).send();
-// });
-
-// router.get('/private', isLoggedIn(), (req, res, next) => {
-//   res.status(200).json({
-//     message: 'This is a private message'
-//   });
-// });
 
 module.exports = router;
