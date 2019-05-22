@@ -16,7 +16,7 @@ mongoose
   .connect(process.env.MONGODB_URI, {
     keepAlive: true,
     useNewUrlParser: true,
-    reconnectTries: Number.MAX_VALUE,
+    reconnectTries: Number.MAX_VALUE
   })
   .then(() => {
     console.log(`Connected to database`);
@@ -30,30 +30,23 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN],
-  }),
+    origin: [process.env.PUBLIC_DOMAIN]
+  })
 );
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS,DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-//   next();
-// });
 
 app.use(
   session({
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60, // 1 day
+      ttl: 24 * 60 * 60 // 1 day
     }),
     secret: process.env.SECRET_SESSION,
     resave: true,
     saveUninitialized: true,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-  }),
+      maxAge: 24 * 60 * 60 * 1000
+    }
+  })
 );
 
 app.use(logger('dev'));
