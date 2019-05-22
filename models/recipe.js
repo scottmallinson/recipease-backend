@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+mongoose.set('useCreateIndex', true);
+
 const recipeSchema = new Schema({
   creatorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
