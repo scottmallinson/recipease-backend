@@ -10,11 +10,11 @@ const recipeSchema = new Schema({
   photoUrl: { type: String },
   duration: { type: Number, required: true, min: 0 },
   ingredients: [ {
-    name: { type: String, unique: true },
+    name: { type: String },
     quantity: { type: Number }
   } ],
   instructions: [],
-  yield: { type: Number, required: true, min: 0 },
+  servings: { type: Number, required: true, min: 0 },
   nutritionalInfo: [{
     name: { type: String },
     value: { type: Number }
