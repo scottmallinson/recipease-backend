@@ -62,6 +62,25 @@ router.post(
   }
 );
 
+router.post(
+  '/delete',
+  isLoggedIn(),
+  async (req, res, next) => {
+    const { username } = req.body;
+    try {
+      const user = await User.deleteOne({ username });
+      if (!user) {
+        next(createError(404));
+      } else {
+        req.session.destroy();
+        return res.status(204).send();
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.post('/logout', isLoggedIn(), (req, res, next) => {
   req.session.destroy();
   return res.status(204).send();
