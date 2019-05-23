@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const User = require('../models/user');
+const Recipe = require('../models/recipe');
 
 const {
   isLoggedIn
@@ -51,6 +52,19 @@ router.put(
     try {
       const recipe = await User.findOneAndUpdate({ _id }, { $set: { password, displayName, biography, photoUrl, measurements } }, { new: true });
       res.status(200).json(recipe);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get(
+  '/profile/:id',
+  async (req, res, next) => {
+    const { id: _id } = req.params;
+    try {
+      const recipes = await Recipe.find({ creatorId: _id });
+      res.status(200).json(recipes);
     } catch (error) {
       next(error);
     }
