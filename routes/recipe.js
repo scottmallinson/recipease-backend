@@ -103,7 +103,6 @@ router.get(
   async (req, res, next) => {
     try {
       const recipe = await Recipe.find();
-      console.log(recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
