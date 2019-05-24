@@ -55,8 +55,10 @@ router.get(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      const recipes = await Recipe.find({ creatorId: _id });
-      res.status(200).json(recipes);
+      await User.findOne({ _id }).populate('createdRecipes').populate('savedRecipes').exec(function (err, users) {
+        if (err) console.log(err);
+        else res.status(200).json(users);
+      });
     } catch (error) {
       next(error);
     }
