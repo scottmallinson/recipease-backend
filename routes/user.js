@@ -6,13 +6,8 @@ const router = express.Router();
 const User = require('../models/user');
 const Recipe = require('../models/recipe');
 
-const {
-  isLoggedIn
-} = require('../helpers/middlewares');
-
 router.delete(
   '/delete',
-  isLoggedIn(),
   async (req, res, next) => {
     const { id: _id } = req.body;
     try {
@@ -31,11 +26,10 @@ router.delete(
 
 router.put(
   '/pantry',
-  isLoggedIn(),
   async (req, res, next) => {
-    const { _id } = req.session.currentUser;
+    const { _id, pantry } = req.body;
     try {
-      const recipe = await User.findOneAndUpdate({ _id }, { $set: { pantry: req.body } }, { new: true });
+      const recipe = await User.findOneAndUpdate({ _id }, { $set: { pantry } }, { new: true });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -45,10 +39,8 @@ router.put(
 
 router.put(
   '/:id',
-  isLoggedIn(),
   async (req, res, next) => {
-    const { id: _id } = req.params;
-    const { password, displayName, biography, photoUrl, measurements } = req.body;
+    const { _id, password, displayName, biography, photoUrl, measurements } = req.body;
     try {
       const recipe = await User.findOneAndUpdate({ _id }, { $set: { password, displayName, biography, photoUrl, measurements } }, { new: true });
       res.status(200).json(recipe);

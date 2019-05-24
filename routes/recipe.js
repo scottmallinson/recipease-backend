@@ -5,10 +5,6 @@ const router = express.Router();
 
 const Recipe = require('../models/recipe');
 
-const {
-  isLoggedIn
-} = require('../helpers/middlewares');
-
 router.get(
   '/search',
   async (req, res, next) => {
@@ -24,7 +20,6 @@ router.get(
 
 router.post(
   '/create',
-  isLoggedIn(),
   async (req, res, next) => {
     const { creatorId, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
     try {
@@ -38,7 +33,6 @@ router.post(
 
 router.put(
   '/update',
-  isLoggedIn(),
   async (req, res, next) => {
     const { creatorId, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
     try {
@@ -52,7 +46,6 @@ router.put(
 
 router.delete(
   '/:id',
-  isLoggedIn(),
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
