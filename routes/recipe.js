@@ -1,8 +1,6 @@
 const express = require('express');
 const createError = require('http-errors');
-
 const router = express.Router();
-
 const User = require('../models/user');
 const Recipe = require('../models/recipe');
 
@@ -11,8 +9,34 @@ router.get(
   async (req, res, next) => {
     const { s: query } = req.query;
     var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
+    console.log(queryString);
     try {
       const recipe = await Recipe.find({ $text: { $search: queryString } }, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } });
+      console.log(recipe);
+      res.status(200).json(recipe);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  '/search',
+  async (req, res, next) => {
+    const { searchForItems } = req.body;
+    const regex = [];
+    for (var i = 0; i < searchForItems.length; i++) {
+      regex[i] = new RegExp(searchForItems[i]);
+    }
+    console.log(searchForItems);
+    try {
+      const recipe = await Recipe.aggregate()
+        .match({ 'ingredients.name': { $in: regex } })
+        .unwind('$ingredients')
+        .match({ 'ingredients.name': { $in: regex } })
+        .group({ _id: { 'name': '$name', 'description': '$description' }, matches: { $sum: 1 } })
+        .sort({ matches: -1 });
+      console.log(recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
