@@ -12,7 +12,7 @@ router.get(
     const { s: query } = req.query;
     var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
     try {
-      const recipe = await Recipe.find({ $text: { $search: queryString } });
+      const recipe = await Recipe.find({ $text: { $search: queryString } }, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
