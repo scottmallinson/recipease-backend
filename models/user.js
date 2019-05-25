@@ -15,7 +15,7 @@ const userSchema = new Schema({
   ability: [{ type: Schema.Types.ObjectId, ref: 'SkillsAssessment' }],
   pantry: [{
     item: { type: String },
-    quantity: { type: Number, min: 0 }
+    quantity: { type: String }
   }]
 }, {
   timestamps: {
