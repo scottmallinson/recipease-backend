@@ -11,7 +11,7 @@ const recipeSchema = new Schema({
   duration: { type: Number, required: true, min: 0 },
   ingredients: [ {
     name: { type: String },
-    quantity: { type: Number }
+    quantity: { type: String }
   } ],
   instructions: [],
   servings: { type: Number, required: true, min: 0 },
@@ -25,6 +25,17 @@ const recipeSchema = new Schema({
     updatedAt: 'updated_at'
   }
 });
+
+// recipeSchema.index({ '$**': 'text' }); // add search index for all text fields
+recipeSchema.index({
+  'name': 'text',
+  'description': 'text',
+  'ingredients.name': 'text'
+},
+{
+  name: 'text'
+}
+);
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
