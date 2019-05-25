@@ -9,9 +9,10 @@ const Recipe = require('../models/recipe');
 router.get(
   '/search',
   async (req, res, next) => {
-    const { s: name } = req.query;
+    const { s: query } = req.query;
+    var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
     try {
-      const recipe = await Recipe.find({ name: { '$regex': name, '$options': 'i' } });
+      const recipe = await Recipe.find({ $text: { $search: queryString } });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
