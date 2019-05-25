@@ -4,7 +4,6 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const User = require('../models/user');
-const Recipe = require('../models/recipe');
 
 router.delete(
   '/delete',
