@@ -42,9 +42,9 @@ router.post(
 router.put(
   '/update',
   async (req, res, next) => {
-    const { creatorId, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
+    const { _id, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
     try {
-      const recipe = await Recipe.findOneAndUpdate({ creatorId }, { $set: { name, description, photoUrl, duration, ingredients, instructions, servings } }, { new: true });
+      const recipe = await Recipe.findOneAndUpdate({ _id }, { $set: { name, description, photoUrl, duration, ingredients, instructions, servings } }, { new: true });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -56,9 +56,6 @@ router.put(
   '/save',
   async (req, res, next) => {
     const { recipeId, userId } = req.body;
-    console.log(req.body);
-    console.log('recipeId', recipeId);
-    console.log('userId', userId);
     try {
       const save = await User.findOneAndUpdate({ _id: userId }, { $push: { savedRecipes: recipeId } }, { new: true });
       res.status(200).json(save);
