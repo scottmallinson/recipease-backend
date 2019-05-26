@@ -24,11 +24,11 @@ router.post(
   '/search',
   async (req, res, next) => {
     const { searchForItems } = req.body;
-    const ingredients = searchForItems.map((items) => items.item);
+    // const ingredients = searchForItems.map((items) => items.item);
     // console.log('ingredients', ingredients);
     const regex = [];
-    for (var i = 0; i < ingredients.length; i++) {
-      regex[i] = new RegExp(ingredients[i]);
+    for (var i = 0; i < searchForItems.length; i++) {
+      regex[i] = new RegExp(searchForItems[i]);
     }
     try {
       const recipe = await Recipe.aggregate()
