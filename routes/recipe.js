@@ -12,7 +12,7 @@ router.get(
     console.log(queryString);
     try {
       const recipe = await Recipe.find({ $text: { $search: queryString } }, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } });
-      console.log(recipe);
+      console.log('search recipes', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -28,15 +28,14 @@ router.post(
     for (var i = 0; i < searchForItems.length; i++) {
       regex[i] = new RegExp(searchForItems[i]);
     }
-    console.log(searchForItems);
     try {
       const recipe = await Recipe.aggregate()
         .match({ 'ingredients.name': { $in: regex } })
         .unwind('$ingredients')
         .match({ 'ingredients.name': { $in: regex } })
-        .group({ _id: { 'name': '$name', 'description': '$description' }, matches: { $sum: 1 } })
+        .group({ _id: { _id: '$_id', 'name': '$name', 'description': '$description' }, matches: { $sum: 1 } })
         .sort({ matches: -1 });
-      console.log(recipe);
+      console.log('search recipes by ingredients', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -52,6 +51,7 @@ router.post(
     try {
       const recipe = await Recipe.create({ creatorId, name, description, photoUrl, duration, ingredients, instructions, servings });
       recipeId = recipe._id;
+      console.log('create recipe', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -70,6 +70,7 @@ router.put(
     const { _id, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
     try {
       const recipe = await Recipe.findOneAndUpdate({ _id }, { $set: { name, description, photoUrl, duration, ingredients, instructions, servings } }, { new: true });
+      console.log('update recipe', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -83,6 +84,7 @@ router.put(
     const { recipeId, userId } = req.body;
     try {
       const save = await User.findOneAndUpdate({ _id: userId }, { $push: { savedRecipes: recipeId } }, { new: true });
+      console.log('save recipe to user', save);
       res.status(200).json(save);
     } catch (error) {
       next(error);
@@ -96,6 +98,7 @@ router.delete(
     const { id: _id } = req.params;
     try {
       const recipe = await Recipe.deleteOne({ _id });
+      console.log('delete recipe by id', recipe);
       if (!recipe) {
         next(createError(404));
       } else {
@@ -113,6 +116,7 @@ router.get(
     const { id: _id } = req.params;
     try {
       const recipe = await Recipe.findById({ _id });
+      console.log('get recipe by ID', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
@@ -125,6 +129,7 @@ router.get(
   async (req, res, next) => {
     try {
       const recipe = await Recipe.find();
+      console.log('get all recipes', recipe);
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
