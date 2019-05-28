@@ -1,8 +1,11 @@
+'use strict';
+
 const express = require('express');
 const createError = require('http-errors');
 const router = express.Router();
 const User = require('../models/user');
 const Recipe = require('../models/recipe');
+const parser = require('../config/cloudinary');
 
 router.get(
   '/search',
@@ -55,6 +58,22 @@ router.post(
     }
     try {
       await User.findOneAndUpdate({ _id: creatorId }, { $push: { createdRecipes: recipeId } }, { new: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  '/create/image',
+  parser.single('recipease'),
+  async (req, res, next) => {
+    if (!req.file) {
+      next(new Error('No file uploaded!'));
+    };
+    try {
+      const imageUrl = req.file.secure_url;
+      res.json(imageUrl).status(200);
     } catch (error) {
       next(error);
     }

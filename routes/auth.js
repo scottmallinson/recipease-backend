@@ -1,16 +1,12 @@
+'use strict';
+
 const express = require('express');
 const createError = require('http-errors');
-
 const router = express.Router();
 const bcrypt = require('bcrypt');
-
 const User = require('../models/user');
 
-const {
-  isLoggedIn,
-  isNotLoggedIn,
-  validationLoggin
-} = require('../helpers/middlewares');
+const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
 router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
