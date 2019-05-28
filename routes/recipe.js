@@ -35,7 +35,7 @@ router.post(
         .match({ 'ingredients.name': { $in: regex } })
         .unwind('$ingredients')
         .match({ 'ingredients.name': { $in: regex } })
-        .group({ _id: { _id: '$_id', 'name': '$name', 'description': '$description' }, matches: { $sum: 1 } })
+        .group({ _id: { _id: '$_id', 'name': '$name', 'description': '$description', 'photoUrl': '$photoUrl' }, matches: { $sum: 1 } })
         .sort({ matches: -1 });
       res.status(200).json(recipe);
     } catch (error) {
