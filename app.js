@@ -32,7 +32,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN]
+    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-ironhack.herokuapp.com']
   })
 );
 
@@ -75,6 +75,10 @@ app.use((err, req, res, next) => {
     const statusError = err.status || '500';
     res.status(statusError).json(err);
   }
+});
+
+app.use((req, res, next) => {
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 module.exports = app;
