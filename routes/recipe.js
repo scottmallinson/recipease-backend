@@ -141,8 +141,10 @@ router.get(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      const recipe = await Recipe.findById({ _id });
-      res.status(200).json(recipe);
+      await Recipe.findById({ _id }).populate('creatorId').exec(function (err, recipe) {
+        if (err) console.log(err);
+        else res.status(200).json(recipe);
+      });
     } catch (error) {
       next(error);
     }
