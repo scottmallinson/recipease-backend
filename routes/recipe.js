@@ -106,6 +106,19 @@ router.put(
   }
 );
 
+router.put(
+  '/unsave',
+  async (req, res, next) => {
+    const { recipeId, userId } = req.body;
+    try {
+      const save = await User.findOneAndUpdate({ _id: userId }, { $pull: { savedRecipes: recipeId } }, { new: true });
+      res.status(200).json(save);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.delete(
   '/:id',
   async (req, res, next) => {
