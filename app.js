@@ -60,6 +60,10 @@ app.use('/api/auth', auth);
 app.use('/api/user', user);
 app.use('/api/recipes', recipe);
 
+app.use((req, res, next) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   res.status(404).json({ code: 'not found' });
@@ -74,10 +78,6 @@ app.use((err, req, res, next) => {
     const statusError = err.status || '500';
     res.status(statusError).json(err);
   }
-});
-
-app.use((req, res, next) => {
-  res.sendFile(__dirname + '/public/index.html');
 });
 
 module.exports = app;
