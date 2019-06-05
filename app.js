@@ -61,7 +61,7 @@ app.use('/api/user', user);
 app.use('/api/recipes', recipe);
 
 app.use((req, res, next) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 // catch 404 and forward to error handler
