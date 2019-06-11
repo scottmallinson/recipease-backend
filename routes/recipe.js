@@ -25,10 +25,10 @@ router.get(
 router.post(
   '/search',
   async (req, res, next) => {
-    const { searchForItems } = req.body;
+    const { selectedIngredients } = req.body;
     const regex = [];
-    for (var i = 0; i < searchForItems.length; i++) {
-      regex[i] = new RegExp(searchForItems[i]);
+    for (var i = 0; i < selectedIngredients.length; i++) {
+      regex[i] = new RegExp(selectedIngredients[i]);
     }
     try {
       const recipe = await Recipe.aggregate()
