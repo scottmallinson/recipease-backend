@@ -1,3 +1,5 @@
+'use strict';
+
 const createError = require('http-errors');
 
 exports.isLoggedIn = () => (req, res, next) => {
