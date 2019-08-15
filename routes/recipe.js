@@ -13,7 +13,6 @@ router.get(
     const { s: query } = req.query;
     // eslint-disable-next-line no-useless-escape
     var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
-    console.log(queryString);
     try {
       const recipe = await Recipe.find({ $text: { $search: queryString } }, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } });
       res.status(200).json(recipe);
