@@ -11,6 +11,7 @@ router.get(
   '/search',
   async (req, res, next) => {
     const { s: query } = req.query;
+    // eslint-disable-next-line no-useless-escape
     var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
     console.log(queryString);
     try {
