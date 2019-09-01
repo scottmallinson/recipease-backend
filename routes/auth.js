@@ -1,12 +1,10 @@
-'use strict';
-
 const express = require('express');
 const createError = require('http-errors');
-const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const { isLoggedIn, isNotLoggedIn, validationLogin } = require('../helpers/middlewares');
 
-const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
+const router = express.Router();
 
 router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
@@ -15,7 +13,7 @@ router.get('/me', isLoggedIn(), (req, res, next) => {
 router.post(
   '/login',
   isNotLoggedIn(),
-  validationLoggin(),
+  validationLogin(),
   async (req, res, next) => {
     const { username, password } = req.body;
     try {
@@ -31,31 +29,29 @@ router.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.post(
   '/signup',
   isNotLoggedIn(),
-  validationLoggin(),
+  validationLogin(),
   async (req, res, next) => {
     const { username, password } = req.body;
-
     try {
       const user = await User.findOne({ username }, 'username');
       if (user) {
         return next(createError(422));
-      } else {
-        const salt = bcrypt.genSaltSync(10);
-        const hashPass = bcrypt.hashSync(password, salt);
-        const newUser = await User.create({ username, password: hashPass });
-        req.session.currentUser = newUser;
-        res.status(200).json(newUser);
       }
+      const salt = bcrypt.genSaltSync(10);
+      const hashPass = bcrypt.hashSync(password, salt);
+      const newUser = await User.create({ username, password: hashPass });
+      req.session.currentUser = newUser;
+      res.status(200).json(newUser);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.post('/logout', isLoggedIn(), (req, res, next) => {
@@ -65,7 +61,7 @@ router.post('/logout', isLoggedIn(), (req, res, next) => {
 
 router.get('/private', isLoggedIn(), (req, res, next) => {
   res.status(200).json({
-    message: 'This is a private message'
+    message: 'This is a private message',
   });
 });
 

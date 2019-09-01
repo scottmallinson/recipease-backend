@@ -1,5 +1,3 @@
-'use strict';
-
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
@@ -19,12 +17,12 @@ mongoose
   .connect(process.env.MONGODB_URI, {
     keepAlive: true,
     useNewUrlParser: true,
-    reconnectTries: Number.MAX_VALUE
+    reconnectTries: Number.MAX_VALUE,
   })
   .then(() => {
-    console.log(`Connected to database`);
+    console.log('Connected to database');
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
   });
 
@@ -33,23 +31,23 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-ironhack.herokuapp.com']
-  })
+    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-ironhack.herokuapp.com'],
+  }),
 );
 
 app.use(
   session({
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60 // 1 day
+      ttl: 24 * 60 * 60, // 1 day
     }),
     secret: process.env.SECRET_SESSION,
     resave: true,
     saveUninitialized: true,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  })
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
 );
 
 app.use(logger('dev'));
@@ -75,7 +73,7 @@ app.use((err, req, res, next) => {
   // always log the error
   console.error('ERROR', req.method, req.path, err);
 
-  // only render if the error ocurred before sending the response
+  // only render if the error occurred before sending the response
   if (!res.headersSent) {
     const statusError = err.status || '500';
     res.status(statusError).json(err);

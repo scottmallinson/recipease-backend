@@ -1,25 +1,24 @@
-'use strict';
-
 const express = require('express');
 const createError = require('http-errors');
-const router = express.Router();
 const User = require('../models/user');
 const Recipe = require('../models/recipe');
 const parser = require('../config/cloudinary');
+
+const router = express.Router();
 
 router.get(
   '/search',
   async (req, res, next) => {
     const { s: query } = req.query;
     // eslint-disable-next-line no-useless-escape
-    var queryString = '\"' + query.split(' ').join('\" \"') + '\"';
+    const queryString = `\"${query.split(' ').join('\" \"')}\"`;
     try {
       const recipe = await Recipe.find({ $text: { $search: queryString } }, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.post(
@@ -27,7 +26,7 @@ router.post(
   async (req, res, next) => {
     const { selectedIngredients } = req.body;
     const regex = [];
-    for (var i = 0; i < selectedIngredients.length; i++) {
+    for (let i = 0; i < selectedIngredients.length; i++) {
       regex[i] = new RegExp(selectedIngredients[i]);
     }
     try {
@@ -35,22 +34,31 @@ router.post(
         .match({ 'ingredients.name': { $in: regex } })
         .unwind('$ingredients')
         .match({ 'ingredients.name': { $in: regex } })
-        .group({ _id: { _id: '$_id', 'name': '$name', 'description': '$description', 'photoUrl': '$photoUrl' }, matches: { $sum: 1 } })
+        .group({
+          _id: {
+            _id: '$_id', name: '$name', description: '$description', photoUrl: '$photoUrl',
+          },
+          matches: { $sum: 1 },
+        })
         .sort({ matches: -1 });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.post(
   '/create',
   async (req, res, next) => {
     let recipeId = '';
-    const { creatorId, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
+    const {
+      creatorId, name, description, photoUrl, duration, ingredients, instructions, servings,
+    } = req.body;
     try {
-      const recipe = await Recipe.create({ creatorId, name, description, photoUrl, duration, ingredients, instructions, servings });
+      const recipe = await Recipe.create({
+        creatorId, name, description, photoUrl, duration, ingredients, instructions, servings,
+      });
       recipeId = recipe._id;
       res.status(200).json(recipe);
     } catch (error) {
@@ -61,7 +69,7 @@ router.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.post(
@@ -70,27 +78,33 @@ router.post(
   async (req, res, next) => {
     if (!req.file) {
       next(new Error('No file uploaded!'));
-    };
+    }
     try {
       const imageUrl = req.file.secure_url;
       res.json(imageUrl).status(200);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.put(
   '/update',
   async (req, res, next) => {
-    const { _id, name, description, photoUrl, duration, ingredients, instructions, servings } = req.body;
+    const {
+      _id, name, description, photoUrl, duration, ingredients, instructions, servings,
+    } = req.body;
     try {
-      const recipe = await Recipe.findOneAndUpdate({ _id }, { $set: { name, description, photoUrl, duration, ingredients, instructions, servings } }, { new: true });
+      const recipe = await Recipe.findOneAndUpdate({ _id }, {
+        $set: {
+          name, description, photoUrl, duration, ingredients, instructions, servings,
+        },
+      }, { new: true });
       res.status(200).json(recipe);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.put(
@@ -103,7 +117,7 @@ router.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.put(
@@ -116,7 +130,7 @@ router.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.delete(
@@ -133,7 +147,7 @@ router.delete(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.get(
@@ -141,14 +155,14 @@ router.get(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      await Recipe.findById({ _id }).populate('creatorId').exec(function (err, recipe) {
+      await Recipe.findById({ _id }).populate('creatorId').exec((err, recipe) => {
         if (err) console.log(err);
         else res.status(200).json(recipe);
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.get(
@@ -160,7 +174,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 module.exports = router;
