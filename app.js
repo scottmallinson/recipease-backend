@@ -19,7 +19,8 @@ mongoose
   .connect(process.env.MONGODB_URI, {
     keepAlive: true,
     useNewUrlParser: true,
-    reconnectTries: Number.MAX_VALUE
+    reconnectTries: Number.MAX_VALUE,
+    useUnifiedTopology: true
   })
   .then(() => {
     console.log(`Connected to database`);
@@ -33,19 +34,18 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-ironhack.herokuapp.com']
+    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-frontend.vercel.app']
   })
 );
 
 app.use(
   session({
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60 // 1 day
-    }),
-    secret: process.env.SECRET_SESSION,
-    resave: true,
+    secret: process.env.SESSION_SECRET || 'defaultSecret',
+    resave: false,
     saveUninitialized: true,
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection
+    }),
     cookie: {
       maxAge: 24 * 60 * 60 * 1000
     }
