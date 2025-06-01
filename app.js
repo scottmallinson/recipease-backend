@@ -34,7 +34,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN, 'https://recipease-frontend.vercel.app']
+    origin: [process.env.PUBLIC_DOMAIN]
   })
 );
 
@@ -80,6 +80,12 @@ app.use((err, req, res, next) => {
     const statusError = err.status || '500';
     res.status(statusError).json(err);
   }
+});
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.PUBLIC_DOMAIN);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
 });
 
 module.exports = app;
