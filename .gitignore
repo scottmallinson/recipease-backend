@@ -28,3 +28,13 @@ desktop.ini
 
 # dotenv
 .env
+
+# Yarn
+.yarn/
+.pnp.cjs
+.pnp.loader.mjs
+.yarnrc.yml
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
