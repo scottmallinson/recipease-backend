@@ -10,8 +10,8 @@ router.delete(
   async (req, res, next) => {
     const { id: _id } = req.body;
     try {
-      const user = await User.deleteOne({ _id });
-      if (!user) {
+      const result = await User.deleteOne({ _id });
+      if (result.deletedCount === 0) {
         next(createError(404));
       } else {
         req.session.destroy();
@@ -54,10 +54,11 @@ router.get(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      await User.findOne({ _id }).populate('createdRecipes').populate('savedRecipes').exec(function (err, user) {
-        if (err) console.log(err);
-        else res.status(200).json(user);
-      });
+      const user = await User.findOne({ _id }).populate('createdRecipes').populate('savedRecipes').exec();
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json(user);
     } catch (error) {
       next(error);
     }

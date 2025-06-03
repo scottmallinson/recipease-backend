@@ -3,8 +3,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-mongoose.set('useCreateIndex', true);
-
 const skillsAssessmentSchema = new Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String, required: true },

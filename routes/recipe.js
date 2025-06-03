@@ -28,7 +28,7 @@ router.post(
     const { selectedIngredients } = req.body;
     const regex = [];
     for (var i = 0; i < selectedIngredients.length; i++) {
-      regex[i] = new RegExp(selectedIngredients[i]);
+      regex[i] = new RegExp(selectedIngredients[i], 'i');
     }
     try {
       const recipe = await Recipe.aggregate()
@@ -124,8 +124,8 @@ router.delete(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      const recipe = await Recipe.deleteOne({ _id });
-      if (!recipe) {
+      const result = await Recipe.deleteOne({ _id });
+      if (result.deletedCount === 0) {
         next(createError(404));
       } else {
         return res.status(204).send();
@@ -141,10 +141,11 @@ router.get(
   async (req, res, next) => {
     const { id: _id } = req.params;
     try {
-      await Recipe.findById({ _id }).populate('creatorId').exec(function (err, recipe) {
-        if (err) console.log(err);
-        else res.status(200).json(recipe);
-      });
+      const recipe = await Recipe.findById({ _id }).populate('creatorId').exec();
+      if (!recipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+      res.status(200).json(recipe);
     } catch (error) {
       next(error);
     }

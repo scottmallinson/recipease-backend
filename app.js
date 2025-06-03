@@ -11,23 +11,28 @@ const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 require('dotenv').config();
 
+// Set mongoose strictQuery option to suppress deprecation warning
+mongoose.set('strictQuery', false);
+
 const auth = require('./routes/auth');
 const user = require('./routes/user');
 const recipe = require('./routes/recipe');
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    keepAlive: true,
-    useNewUrlParser: true,
-    reconnectTries: Number.MAX_VALUE,
-    useUnifiedTopology: true
-  })
-  .then(() => {
-    console.log(`Connected to database`);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+// Only connect to MongoDB if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(process.env.MONGODB_URI, {
+      keepAlive: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .then(() => {
+      console.log(`Connected to database`);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 
 const app = express();
 
@@ -38,19 +43,24 @@ app.use(
   })
 );
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'defaultSecret',
-    resave: false,
-    saveUninitialized: true,
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection
-    }),
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  })
-);
+// Configure session with appropriate store based on environment
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET || 'defaultSecret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000
+  }
+};
+
+// Only use MongoStore if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  sessionConfig.store = new MongoStore({
+    mongooseConnection: mongoose.connection
+  });
+}
+
+app.use(session(sessionConfig));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -77,7 +87,7 @@ app.use((err, req, res, next) => {
 
   // only render if the error ocurred before sending the response
   if (!res.headersSent) {
-    const statusError = err.status || '500';
+    const statusError = err.status || 500;
     res.status(statusError).json(err);
   }
 });
