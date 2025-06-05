@@ -1,9 +1,8 @@
-'use strict';
+import express from 'express';
+import createError from 'http-errors';
+import User from '../models/user.js';
 
-const express = require('express');
-const createError = require('http-errors');
 const router = express.Router();
-const User = require('../models/user');
 
 router.delete(
   '/delete',
@@ -78,4 +77,4 @@ router.get(
   }
 );
 
-module.exports = router;
+export default router;

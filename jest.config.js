@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     testEnvironment: 'node',
     testTimeout: 30000,
     setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
@@ -10,5 +10,9 @@ module.exports = {
         '!**/node_modules/**'
     ],
     coverageDirectory: 'coverage',
-    coverageReporters: ['text', 'lcov', 'html']
+    coverageReporters: ['text', 'lcov', 'html'],
+    transform: {},
+    moduleNameMapper: {
+        '^(\\.{1,2}/.*)\\.js$': '$1'
+    }
 };

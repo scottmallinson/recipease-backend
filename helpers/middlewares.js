@@ -1,8 +1,8 @@
 'use strict';
 
-const createError = require('http-errors');
+import createError from 'http-errors';
 
-exports.isLoggedIn = () => (req, res, next) => {
+export const isLoggedIn = () => (req, res, next) => {
   if (req.session.currentUser) {
     next();
   } else {
@@ -10,7 +10,7 @@ exports.isLoggedIn = () => (req, res, next) => {
   }
 };
 
-exports.isNotLoggedIn = () => (req, res, next) => {
+export const isNotLoggedIn = () => (req, res, next) => {
   if (!req.session.currentUser) {
     next();
   } else {
@@ -18,7 +18,7 @@ exports.isNotLoggedIn = () => (req, res, next) => {
   }
 };
 
-exports.validationLoggin = () => (req, res, next) => {
+export const validationLoggin = () => (req, res, next) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
