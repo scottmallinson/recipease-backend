@@ -1,8 +1,8 @@
-const request = require('supertest');
-const bcrypt = require('bcrypt');
-const app = require('../app');
-const User = require('../models/user');
-const dbHandler = require('./db-handler');
+import request from 'supertest';
+import bcrypt from 'bcrypt';
+import app from '../app.js';
+import User from '../models/user.js';
+import * as dbHandler from './db-handler.js';
 
 describe('Auth Routes', () => {
 	beforeAll(async () => {

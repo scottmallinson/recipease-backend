@@ -1,11 +1,10 @@
-'use strict';
+import express from 'express';
+import createError from 'http-errors';
+import User from '../models/user.js';
+import Recipe from '../models/recipe.js';
+import parser from '../config/cloudinary.js';
 
-const express = require('express');
-const createError = require('http-errors');
 const router = express.Router();
-const User = require('../models/user');
-const Recipe = require('../models/recipe');
-const parser = require('../config/cloudinary');
 
 router.get(
   '/search',
@@ -164,4 +163,4 @@ router.get(
   }
 );
 
-module.exports = router;
+export default router;

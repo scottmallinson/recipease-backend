@@ -1,8 +1,8 @@
 'use strict';
 
-const cloudinary = require('cloudinary');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const multer = require('multer');
+import cloudinary from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import multer from 'multer';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -20,4 +20,4 @@ const storage = new CloudinaryStorage({
 
 const parser = multer({ storage: storage });
 
-module.exports = parser;
+export default parser;

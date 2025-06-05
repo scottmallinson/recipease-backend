@@ -1,22 +1,29 @@
 'use strict';
 
-const express = require('express');
-const path = require('path');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+// ES module compatibility for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config();
 
 // Set mongoose strictQuery option to suppress deprecation warning
 mongoose.set('strictQuery', false);
 
-const auth = require('./routes/auth');
-const user = require('./routes/user');
-const recipe = require('./routes/recipe');
+import auth from './routes/auth.js';
+import user from './routes/user.js';
+import recipe from './routes/recipe.js';
 
 // Only connect to MongoDB if not in test environment
 if (process.env.NODE_ENV !== 'test') {
@@ -55,8 +62,8 @@ const sessionConfig = {
 
 // Only use MongoStore if not in test environment
 if (process.env.NODE_ENV !== 'test') {
-  sessionConfig.store = new MongoStore({
-    mongooseConnection: mongoose.connection
+  sessionConfig.store = MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI
   });
 }
 
@@ -98,4 +105,4 @@ app.use((req, res, next) => {
   next();
 });
 
-module.exports = app;
+export default app;
