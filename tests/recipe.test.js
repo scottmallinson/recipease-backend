@@ -1,9 +1,9 @@
-const request = require('supertest');
-const { ObjectId } = require('mongodb');
-const app = require('../app');
-const User = require('../models/user');
-const Recipe = require('../models/recipe');
-const dbHandler = require('./db-handler');
+import request from 'supertest';
+import { ObjectId } from 'mongodb';
+import app from '../app.js';
+import User from '../models/user.js';
+import Recipe from '../models/recipe.js';
+import * as dbHandler from './db-handler.js';
 
 describe('Recipe Routes', () => {
 	beforeAll(async () => {

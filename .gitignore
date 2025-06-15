@@ -38,3 +38,6 @@ desktop.ini
 .yarn/unplugged/
 .yarn/build-state.yml
 .yarn/install-state.gz
+
+# PnP files (in case of switching back)
+.pnp.*

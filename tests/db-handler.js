@@ -1,29 +1,73 @@
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const mongoose = require('mongoose');
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 
 let mongod;
+let isConnected = false;
 
-module.exports.connect = async () => {
-	mongod = await MongoMemoryServer.create();
-	const uri = mongod.getUri();
+export const connect = async () => {
+	// Reuse existing connection if already connected
+	if (isConnected && mongoose.connection.readyState === 1) {
+		return;
+	}
 
-	await mongoose.connect(uri, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	});
+	try {
+		// Configure MongoDB Memory Server for better performance
+		mongod = await MongoMemoryServer.create({
+			binary: {
+				skipMD5: true, // Skip MD5 verification for faster startup
+			},
+			instance: {
+				dbName: 'test',
+				storageEngine: 'ephemeralForTest', // Faster in-memory storage
+			},
+		});
+
+		const uri = mongod.getUri();
+
+		// Optimize Mongoose connection options for testing
+		await mongoose.connect(uri, {
+			maxPoolSize: 5, // Limit connection pool for tests
+			serverSelectionTimeoutMS: 5000, // Reduce timeout
+			socketTimeoutMS: 10000, // Reduce socket timeout
+		});
+
+		isConnected = true;
+	} catch (error) {
+		console.error('Database connection error:', error);
+		throw error;
+	}
 };
 
-module.exports.closeDatabase = async () => {
-	await mongoose.connection.dropDatabase();
-	await mongoose.connection.close();
-	await mongod.stop();
+export const closeDatabase = async () => {
+	if (!isConnected) return;
+
+	try {
+		await mongoose.connection.dropDatabase();
+		await mongoose.connection.close();
+		if (mongod) {
+			await mongod.stop();
+		}
+		isConnected = false;
+	} catch (error) {
+		console.error('Database close error:', error);
+		throw error;
+	}
 };
 
-module.exports.clearDatabase = async () => {
-	const collections = mongoose.connection.collections;
+export const clearDatabase = async () => {
+	if (!isConnected) return;
 
-	for (const key in collections) {
-		const collection = collections[key];
-		await collection.deleteMany({});
+	try {
+		const collections = mongoose.connection.collections;
+
+		// Use Promise.all for parallel deletion - much faster
+		const promises = Object.keys(collections).map(key =>
+			collections[key].deleteMany({})
+		);
+
+		await Promise.all(promises);
+	} catch (error) {
+		console.error('Database clear error:', error);
+		throw error;
 	}
 };

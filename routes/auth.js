@@ -1,12 +1,10 @@
-'use strict';
+import express from 'express';
+import createError from 'http-errors';
+import bcrypt from 'bcrypt';
+import User from '../models/user.js';
+import { isLoggedIn, isNotLoggedIn, validationLoggin } from '../helpers/middlewares.js';
 
-const express = require('express');
-const createError = require('http-errors');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const User = require('../models/user');
-
-const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
 router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
@@ -69,4 +67,4 @@ router.get('/private', isLoggedIn(), (req, res, next) => {
   });
 });
 
-module.exports = router;
+export default router;

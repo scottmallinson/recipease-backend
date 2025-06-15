@@ -1,6 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const skillsAssessmentSchema = new Schema({
@@ -20,4 +20,4 @@ const skillsAssessmentSchema = new Schema({
 
 const SkillsAssessment = mongoose.model('SkillsAssessment', skillsAssessmentSchema);
 
-module.exports = SkillsAssessment;
+export default SkillsAssessment;
